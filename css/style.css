@@ -550,7 +550,7 @@ main {
  */
 
 .effect-level {
-  position: absolute;
+  position: relative;
   bottom: 10px;
   left: 50%;
 
