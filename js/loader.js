@@ -10,6 +10,7 @@
       window.copy.Nodes.FILE_LOADER.value = '';
       PHOTO_LOCATION.setAttribute('class', '');
       PHOTO_LOCATION.classList.add(window.redactor.StyleEffect.NONE);
+      PHOTO_LOCATION.removeAttribute('style');
     }
   };
 

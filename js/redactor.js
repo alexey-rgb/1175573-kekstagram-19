@@ -93,6 +93,7 @@
   // накладывает эффект на фотографию
 
   var effectsListClickHandler = function (evt) {
+    window.loader.PHOTO_LOCATION.removeAttribute('style');
     window.loader.PHOTO_LOCATION.classList.add(StyleEffect[evt.target.value.toUpperCase()]);
     removeUnnecessaryClass(evt);
     window.controller.hideControlBlock(PHOTO_LOCATION, EFFECT_CONTROL_WRAPPER);
@@ -108,4 +109,5 @@
     effectsListClickHandler: effectsListClickHandler,
     StyleEffect: StyleEffect,
   };
+
 }());

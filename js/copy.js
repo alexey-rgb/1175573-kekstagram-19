@@ -24,7 +24,7 @@
     },
     addHandler: function () {
       this.element.addEventListener(this.evt, this.handler);
-      this.globalElement.addEventListener(this.evt2, this.handler);
+      //this.globalElement.addEventListener(this.evt2, this.handler);
     },
   };
 
@@ -34,6 +34,8 @@
     window.photo.notDuplicateStrings.splice(0, window.photo.notDuplicateStrings.length);
     window.loader.resetFileLoader();
     this.REDACTOR_WRAPPER.classList.add('hidden') || this.DESC_WRAPPER.classList.add('hidden');
+    window.controller.EFFECT_CONTROL_WRAPPER.setAttribute('hidden', 'hidden');
+    // window.controller.hideControlBlock(window.loader.PHOTO_LOCATION, window.controller.EFFECT_CONTROL_WRAPPER);
   }
 
   // при нажатии на Esc закрывает модальные окна(описание фотографии/редактирование фото)
@@ -67,4 +69,5 @@
     photoRedactor: photoRedactor,
     Nodes: Nodes,
   };
+
 }());

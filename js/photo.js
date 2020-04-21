@@ -84,7 +84,7 @@
     return newPictureDesc;
   };
 
-  // записываем будующие ноды во фрагмент
+  // записываем будущие ноды во фрагмент
 
   var renderPhotos = function (descriptions) {
     var fragment = document.createDocumentFragment();

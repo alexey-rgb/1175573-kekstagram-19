@@ -12,7 +12,7 @@
 
   var hideControlBlock = function (image, controller) {
     if (image.classList.contains(window.redactor.StyleEffect.NONE)) {
-      controller.setAttribute('hidden', 'hidden');
+      return controller.setAttribute('hidden', 'hidden');
     } else if (image.hasAttribute('class') === false) {
       controller.setAttribute('hidden', 'hidden');
     } else if (image.hasAttribute('class') === true) {
@@ -57,7 +57,7 @@
 
     evt.preventDefault();
 
-    var startCoordinates = new Position(evt.clientX, evt.clientY);
+    var startCoordinates = new Position(evt.clientX, evt.clientY)
 
     var mouseMoveHandler = function (moveEvt) {
 
@@ -67,42 +67,53 @@
 
       startCoordinates.setXY(moveEvt.clientX, moveEvt.clientY);
 
+      /**************************************************** */
+
       var MAX_PERCENT = 100;
 
+      var MaxNumbers = {
+        BLUR: 10,
+        BRIGHTNESS: 100
+      };
+
       var convertPositionValue = function (coordinates) {
-        return Math.floor((coordinates * EFFECT_LINE.offsetWidth) / MAX_PERCENT);
-      };
-
-      var prepareProperties = function (method) {
-        return method.filter.slice(0, method.filter.length - 3);
-      };
-
-      var changeSaturation = function (coordinates) {
-        window.loader.PHOTO_LOCATION.style = 'filter: ' + prepareProperties(getComputedStyle(window.loader.PHOTO_LOCATION))
-          + '(' + convertPositionValue(coordinates) + '%);';
-      };
-
-      var EffectClass = {
-        'effects__preview--chrome': changeSaturation,
-        'effects__preview--sepia': changeSaturation,
-        'effects__preview--marvin': changeSaturation,
-        'effects__preview--phobos': changeSaturation,
-        'effects__preview--heat': changeSaturation,
-      };
-
-      var setSaturation = function (coordinates) {
-        for (var i in EffectClass) {
-          if (window.loader.PHOTO_LOCATION.classList.contains(i)) {
-            changeSaturation(coordinates);
-          }
+        if (getComputedStyle(window.loader.PHOTO_LOCATION).filter.includes('grayscale')) {
+          window.loader.PHOTO_LOCATION.style =
+            'filter: grayscale(' + (Math.floor((coordinates * MAX_PERCENT) / EFFECT_LINE.offsetWidth)) + '%);';
+        } else if (getComputedStyle(window.loader.PHOTO_LOCATION).filter.includes('blur')) {
+          window.loader.PHOTO_LOCATION.style =
+            'filter: blur(' + Math.floor((coordinates * MaxNumbers.BLUR) / EFFECT_LINE.offsetWidth) + 'px);'
+        } else if (getComputedStyle(window.loader.PHOTO_LOCATION).filter.includes('brightness')) {
+          window.loader.PHOTO_LOCATION.style =
+            'filter: brightness(' + (Math.floor((coordinates * MaxNumbers.BRIGHTNESS) / EFFECT_LINE.offsetWidth)) + '%);';
+        } else if (getComputedStyle(window.loader.PHOTO_LOCATION).filter.includes('invert')) {
+          window.loader.PHOTO_LOCATION.style =
+            'filter: invert(' + Math.floor((coordinates * MAX_PERCENT) / EFFECT_LINE.offsetWidth) + '%);'
+        } else if (getComputedStyle(window.loader.PHOTO_LOCATION).filter.includes('sepia')) {
+          window.loader.PHOTO_LOCATION.style =
+            'filter: sepia(' + Math.floor((coordinates * MAX_PERCENT) / EFFECT_LINE.offsetWidth) + '%);'
         }
       };
+      /******************************************************************* */
 
+      var EffectClass = ['effects__preview--chrome', 'effects__preview--phobos', 'effects__preview--sepia',
+        'effects__preview--marvin', 'effects__preview--heat'];
+
+      var setSaturation = function (coordinates) {
+        EffectClass.forEach(function (v) {
+          if (window.loader.PHOTO_LOCATION.classList.contains(v)) {
+            convertPositionValue(coordinates);
+          }
+        }
+        )
+      };
+      /*********************************************************************** */
       var actualCoordinates = new Position(setLimit(EFFECT_CONTROLLER.offsetLeft - shift.x,
         ControllerBorder.X_MAX, ControllerBorder.X_MIN), setLimit(EFFECT_CONTROLLER.offsetTop - shift.y,
-        ControllerBorder.Y_MAX, ControllerBorder.Y_MIN));
+          ControllerBorder.Y_MAX, ControllerBorder.Y_MIN));
 
       setSaturation(actualCoordinates.x);
+
 
       EFFECT_CONTROLLER.style.left = actualCoordinates.x + 'px';
       EFFECT_CONTROLLER.style.top = actualCoordinates.y + 'px';
@@ -123,6 +134,8 @@
 
   window.controller = {
     hideControlBlock: hideControlBlock,
-    EFFECT_CONTROLLER: EFFECT_CONTROLLER
+    EFFECT_CONTROLLER: EFFECT_CONTROLLER,
+    EFFECT_CONTROL_WRAPPER: EFFECT_CONTROL_WRAPPER,
+    FORM: FORM
   };
 }());
