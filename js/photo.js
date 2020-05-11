@@ -21,54 +21,43 @@
 
   var classHidden = 'hidden';
 
-  var notDuplicateStrings = [];
 
-  // исключает дублирование строк в рандомных комментариях к фотографиям пользователей
-
-  var compareMessage = function (item) {
-    if (!notDuplicateStrings.includes(item.message)) {
-      notDuplicateStrings.push(item.message);
-    }
-    SOCIAL_PICTURE.src = item.avatar;
-    SOCIAL_PICTURE.alt = item.name;
-  };
-
-  // рендерит текст комментария
-
-  var renderMessage = function () {
-    notDuplicateStrings.forEach(function (message, j) {
-      Nodes.SOCIAL_TEXT[j].textContent = message;
+  var renderMessage = function (comments, node) {
+    comments.forEach(function (comment, j) {
+      node[j].textContent = comment.message;
     });
   };
-
-  // рендерит все что связано с комментарием(текст, аватарка, имя комментатора)
-
-  function renderComment() {
-    window.util.getComments().forEach(function (commentDesc, i) {
-      compareMessage(commentDesc, i);
-    });
-    renderMessage();
-  }
 
   // рендерит лайки, описание, количество коментариев, сами комментарии, увеличенное фото пользователя
 
+  let changeCountOfRenderComment = (node, data) => data == 1
+    ? node.textContent = 'тут пока 1 комментарий' : node.textContent = '2 из ' + data + ' комментариев';
+
   var renderPhotoDescription = function (item) {
-    Nodes.BIG_PICTURE_BLOCK.classList.remove('hidden');
+    Nodes.BIG_PICTURE_BLOCK.classList.remove(classHidden);
     Nodes.BIG_PICTURE_WRAPPER.children[0].src = item.url;
     Nodes.LIKES_COUNT.textContent = item.likes;
-    Nodes.COMMENTS_COUNT.textContent = item.comments;
+    Nodes.COMMENTS_COUNT.textContent = item.comments.length;
     Nodes.IMAGE_DESCRIPTION.textContent = item.description;
-    renderComment();
+    changeCountOfRenderComment(Nodes.COMMENT_COUNT, item.comments.length);
+    renderMessage(item.comments, Nodes.SOCIAL_TEXT);
   };
+
+  // объекты для управления видимостью дом-элементов(кол-во коммент/кнопка загрузки следующих комментариев)
+
+  var commentCount = new window.data.elementVisibilityData(Nodes.COMMENT_COUNT, classHidden);
+  var commentLoader = new window.data.elementVisibilityData(Nodes.COMMENT_LOADER, classHidden);
 
   // прячем по тз количество комментариев и кнопку загруки других комментариев
 
   var removeClasses = function () {
-    window.util.addRemoveClass(Nodes.COMMENT_COUNT, classHidden, 1);
-    window.util.addRemoveClass(Nodes.COMMENT_LOADER, classHidden, 1);
+    commentCount.addRemoveClass(window.data.Visability.ON);
+    commentCount.addRemoveClass.call(commentLoader, window.data.Visability.ON);
   };
 
-  // рендерим случайное фото пользователя
+  // рендерит случайное фото пользователя(при ховере видно количество коментариев, лайков).
+  // можно кликнуть на фото и получаем развернутое описание фотографии
+  //(большое фото, лайки, коментарии, их количества, описание, поле для комментария)
 
   var renderPhoto = function (item) {
     var pictureClickHandler = function () {
@@ -78,7 +67,7 @@
     };
     var newPictureDesc = Nodes.PICTURE_TEMPLATE.cloneNode(true);
     newPictureDesc.querySelector('.picture__img').src = item.url;
-    newPictureDesc.querySelector('.picture__comments').textContent = item.comments;
+    newPictureDesc.querySelector('.picture__comments').textContent = item.comments.length;
     newPictureDesc.querySelector('.picture__likes').textContent = item.likes;
     newPictureDesc.querySelector('.picture').addEventListener('click', pictureClickHandler);
     return newPictureDesc;
@@ -87,6 +76,7 @@
   // записываем будущие ноды во фрагмент
 
   var renderPhotos = function (descriptions) {
+    console.log(Array.isArray(descriptions))
     var fragment = document.createDocumentFragment();
     descriptions.forEach(function (item) {
       fragment.appendChild(renderPhoto(item));
@@ -94,11 +84,46 @@
     return fragment;
   };
 
+  var insertNewDomElement = (data) => Nodes.PICTURES_WRAPPER.appendChild(renderPhotos(data));
+
   window.photo = {
-    render: renderPhotos,
     Nodes: Nodes,
     classHidden: classHidden,
-    notDuplicateStrings: notDuplicateStrings,
+    insertNewDomElement: insertNewDomElement
   };
 }());
+
+/****************Все что касалось мок-данных*******************/
+
+ // используем как кэш для получения уникальных комментариев(без дубля)
+
+/*  var notDuplicateStrings = []; */
+
+  // исключает дублирование строк в рандомных комментариях к фотографиям пользователей
+
+/*  var compareMessage = function (item) {
+   if (!notDuplicateStrings.includes(item.message)) {
+     notDuplicateStrings.push(item.message);
+   }
+   SOCIAL_PICTURE.src = item.avatar;
+   SOCIAL_PICTURE.alt = item.name;
+ }; */
+
+  // рендерит текст комментария
+
+/*  var renderMessage = function () {
+   notDuplicateStrings.forEach(function (message, j) {
+     Nodes.SOCIAL_TEXT[j].textContent = message;
+   });
+ }; */
+
+   // рендерит все что связано с комментарием(текст, аватарка, имя комментатора)
+
+/*   function renderComment() {
+    window.util.getComments().forEach(function (commentDesc, i) {
+      compareMessage(commentDesc, i);
+    });
+    renderMessage();
+  } */
+
 

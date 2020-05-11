@@ -2,6 +2,8 @@
 
 (function () {
 
+  // классы css, содержат стили эффектов, которые можно применить к загруженной пользователем фотографии
+
   var StyleEffect = {
     NONE: 'effects__preview--none',
     CHROME: 'effects__preview--chrome',
@@ -11,25 +13,52 @@
     HEAT: 'effects__preview--heat',
   };
 
-  var EFFECT_CONTROL_WRAPPER = document.querySelector('.effect-level');
+  // структура, позволяющая контролировать масштаб фотографии в зависимости, от текущего значения
+  // поля(актуальный масштаб)
 
-  var PHOTO_LOCATION = document.querySelector('.img-upload__preview img');
+  var StyleSize = {
+    '25%': 'scale(0.25)',
+    '50%': 'scale(0.50)',
+    '75%': 'scale(0.75)',
+    '100%': 'scale(1)',
+  };
 
-  var EFFECTS_LIST = document.querySelector('.effects__list');
+  // обертка окна редатирования
 
-  var SCALE_CONTROL_WRAPPER = document.querySelector('.img-upload__scale');
+  var REDACTOR_WRAPPER = document.querySelector('.img-upload__overlay');
 
-  var condition = {
+  var Nodes = {
+    EFFECT_CONTROL_WRAPPER: REDACTOR_WRAPPER.querySelector('.effect-level'),
+    PHOTO_LOCATION: REDACTOR_WRAPPER.querySelector('.img-upload__preview img'),
+    EFFECTS_LIST: REDACTOR_WRAPPER.querySelector('.effects__list'),
+    SCALE_CONTROL_WRAPPER: REDACTOR_WRAPPER.querySelector('.img-upload__scale'),
+  }
+
+  // содержит данные необходимые для контроля за масштабом редактируемой фотографии
+
+  var scaleСontrollerData = {
     max: '100%',
     min: '25%',
     condition: 'disabled',
     attribute: 'disabled',
-    SIZE_INTERFACE: SCALE_CONTROL_WRAPPER.children[1],
-    LEFT_SIZE_CONTROLLER: SCALE_CONTROL_WRAPPER.children[0],
-    RIGHT_SIZE_CONTROLLER: SCALE_CONTROL_WRAPPER.children[2],
+    SIZE_INTERFACE: Nodes.SCALE_CONTROL_WRAPPER.children[1],
+    LEFT_SIZE_CONTROLLER: Nodes.SCALE_CONTROL_WRAPPER.children[0],
+    RIGHT_SIZE_CONTROLLER: Nodes.SCALE_CONTROL_WRAPPER.children[2],
   };
 
-  // устанавливает макс/мин значения масштабирования фото(значение отображается в % в интерфейсе поля-редактирования фотографии)
+  // необходимо для отображения корректного значения в %, в поле изменения редактируемой фотографии -->
+  // --> в случае если равно ***%(а именно 100%) то есть все остальные значения выглядят так **% -->
+  // --> по тз лимит от 25%-100%
+
+  var controlValueLength = function () {
+    return scaleСontrollerData.SIZE_INTERFACE.value.length === 3
+      ? Number(scaleСontrollerData.SIZE_INTERFACE.value.slice(0, 2)) - 25 + '%'
+      : Number(scaleСontrollerData.SIZE_INTERFACE.value.slice(0, 3)) - 25 + '%';
+  };
+
+
+  // устанавливает макс/мин значения масштабирования --->
+  // ---> редактируемой фотографии(значение отображается в % в интерфейсе поля-редактирования фотографии)
 
   var checkLimitValue = function (arg) {
     if (arg.SIZE_INTERFACE.value === arg.max) {
@@ -39,75 +68,66 @@
     }
   };
 
-  // необходимо для отображения корректного value, в случае если равно ***%(а именно 100%) то есть все остальные значения выглядят так **%
-  // по тз лимит от 25%-100%
-
-  var controlValueLength = function () {
-    return condition.SIZE_INTERFACE.value.length === 3 ? Number(condition.SIZE_INTERFACE.value.slice(0, 2)) - 25 + '%'
-      : Number(condition.SIZE_INTERFACE.value.slice(0, 3)) - 25 + '%';
-  };
-
-  // отображает масштаб фотографии в поле редактирования фото, в зависимости от того на какой кнопке событие
+  // отображает масштаб фотографии в поле редактирования фото,
+  // в зависимости от того на какой кнопке событие
 
   var setScaleValue = function (evt) {
     switch (evt.target) {
-      case condition.LEFT_SIZE_CONTROLLER:
-        condition.SIZE_INTERFACE.value = controlValueLength();
-        condition.RIGHT_SIZE_CONTROLLER.removeAttribute('disabled');
+      case scaleСontrollerData.LEFT_SIZE_CONTROLLER:
+        scaleСontrollerData.SIZE_INTERFACE.value = controlValueLength();
+        scaleСontrollerData.RIGHT_SIZE_CONTROLLER.removeAttribute('disabled');
         break;
-      case condition.RIGHT_SIZE_CONTROLLER:
-        condition.SIZE_INTERFACE.value = Number(condition.SIZE_INTERFACE.value.slice(0, 2)) + 25 + '%';
-        condition.LEFT_SIZE_CONTROLLER.removeAttribute('disabled');
+      case scaleСontrollerData.RIGHT_SIZE_CONTROLLER:
+        scaleСontrollerData.SIZE_INTERFACE.value = Number(scaleСontrollerData.SIZE_INTERFACE.value.slice(0, 2)) + 25 + '%';
+        scaleСontrollerData.LEFT_SIZE_CONTROLLER.removeAttribute('disabled');
         break;
     }
   };
 
-  var StyleSize = {
-    '25%': 'scale(0.25)',
-    '50%': 'scale(0.50)',
-    '75%': 'scale(0.75)',
-    '100%': 'scale(1)',
-  };
-
-  // вызывает вышеупомянутые функции в случае изменения масштаба фото
+  // вызывает 2 вышеупомянутые функции, а именно устанавливает границы масштаба 25%-100%,
+  // шаг измененения масштаба равен 25% на каждый клик по котроллерам,
+  // трансформирует фотографию, в зависимости от значения поля, содержащего текущий масштаб,
+  // на основе структуры данных StyleSize{}
 
   var scaleButtonClickHandler = function (evt) {
     setScaleValue(evt);
-    checkLimitValue(condition);
-    window.loader.PHOTO_LOCATION.style.transform = StyleSize[condition.SIZE_INTERFACE.value];
+    checkLimitValue(scaleСontrollerData);
+    Nodes.PHOTO_LOCATION.style.transform = StyleSize[scaleСontrollerData.SIZE_INTERFACE.value];
   };
 
   var result;
+
+  // убирает не актуальный эффект(css класс) у фотографии
 
   var removeUnnecessaryClass = function (evt) {
     for (var style in StyleEffect) {
       if (StyleEffect[evt.target.value.toUpperCase()] !== StyleEffect[style]) {
         result = StyleEffect[style];
-        if (window.loader.PHOTO_LOCATION.classList.contains(result)) {
-          window.loader.PHOTO_LOCATION.classList.remove(result);
+        if (Nodes.PHOTO_LOCATION.classList.contains(result)) {
+          Nodes.PHOTO_LOCATION.classList.remove(result);
         }
       }
     }
   };
 
-  // накладывает эффект на фотографию
-
   var effectsListClickHandler = function (evt) {
-    window.loader.PHOTO_LOCATION.removeAttribute('style');
-    window.loader.PHOTO_LOCATION.classList.add(StyleEffect[evt.target.value.toUpperCase()]);
+    Nodes.PHOTO_LOCATION.removeAttribute('style');
+    // накладывает эффект на фотографию
+    Nodes.PHOTO_LOCATION.classList.add(StyleEffect[evt.target.value.toUpperCase()]);
     removeUnnecessaryClass(evt);
-    window.controller.hideControlBlock(PHOTO_LOCATION, EFFECT_CONTROL_WRAPPER);
+    // скрывает контроллер глубины эффекта, в случае если эфект не выбран
+    window.util.hideControlBlock(Nodes.PHOTO_LOCATION, Nodes.EFFECT_CONTROL_WRAPPER);
+    // ставит пин-конртоллер в крайнее левое положение
     window.controller.EFFECT_CONTROLLER.style = 'left: 100%';
   };
 
-  checkLimitValue(condition);
+  checkLimitValue(scaleСontrollerData);
 
   window.redactor = {
-    SCALE_CONTROL_WRAPPER: SCALE_CONTROL_WRAPPER,
-    EFFECTS_LIST: EFFECTS_LIST,
+    Nodes: Nodes,
     scaleButtonClickHandler: scaleButtonClickHandler,
     effectsListClickHandler: effectsListClickHandler,
-    StyleEffect: StyleEffect,
+    StyleEffect: StyleEffect
   };
 
 }());

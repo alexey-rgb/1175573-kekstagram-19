@@ -5,8 +5,15 @@
 
   var PHOTO_LOCATION = document.querySelector('.img-upload__preview img');
 
+  var classHidden = 'hidden';
+
+  // после закрытия окна с возможностью редактирования фотографии
+  // обнуляем значение поля загрузки фотографии, что бы была возможность
+  // грузить одну и туже фотографию несколько раз и удаляем эффект с фотографии
+  // в случае если пользователь установил эффект, не отправил фото и просто закрыл окно редактирования
+
   var resetFileLoader = function () {
-    if (window.copy.Nodes.DESC_WRAPPER.classList.contains('hidden')) {
+    if (window.copy.Nodes.DESC_WRAPPER.classList.contains(classHidden)) {
       window.copy.Nodes.FILE_LOADER.value = '';
       PHOTO_LOCATION.setAttribute('class', '');
       PHOTO_LOCATION.classList.add(window.redactor.StyleEffect.NONE);
@@ -14,7 +21,16 @@
     }
   };
 
-  var IMAGE_TYPE = ['jpeg', 'png', 'gif', 'heic', 'webp'];
+  // объект для управления видимостью окна редактирования фотографии
+
+  var redactorWrapper = new window.data.elementVisibilityData(window.copy.Nodes.REDACTOR_WRAPPER,
+    classHidden);
+
+  // типы возможных к загрузке изображений
+
+  var IMAGE_TYPE = ['jpg', 'jpeg', 'png', 'gif', 'heic', 'webp'];
+
+  // процедура загрузки фотографии для редактирования с использованием файл-ридера.
 
   LOADER.addEventListener('change', function () {
     var file = LOADER.files[0];
@@ -27,7 +43,7 @@
       });
       reader.readAsDataURL(file);
     }
-    window.util.addRemoveClass(window.copy.Nodes.REDACTOR_WRAPPER, 'hidden', 0);
+    redactorWrapper.addRemoveClass(window.data.Visability.OFF);
   });
 
   window.loader = {

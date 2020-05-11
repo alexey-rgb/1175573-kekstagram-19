@@ -2,13 +2,13 @@
 
 (function () {
 
-  // моки
+  // присваиваем моки переменной
 
-  var ads = window.data.mockData(window.data.COUNT_MOCK);
+  /*  var ads = window.data.mockData(window.data.COUNT_MOCK); */
 
-  // рендерит 25 фотографий пользователей
+  // рендерит json-ответ сервера в виде 25 фотографий пользователей с описанием
 
-  window.photo.Nodes.PICTURES_WRAPPER.appendChild(window.photo.render(ads));
+  window.backend.getRequest(window.photo.insertNewDomElement);
 
   // активирует возможность открытия/закрытия фотографий и описания, других пользователей
 
@@ -20,10 +20,10 @@
 
   // отображает масштаб редактируемого фото в %
 
-  window.redactor.SCALE_CONTROL_WRAPPER.addEventListener('click', window.redactor.scaleButtonClickHandler);
+  window.redactor.Nodes.SCALE_CONTROL_WRAPPER.addEventListener('click', window.redactor.scaleButtonClickHandler);
 
   // накладывает эффект на фотографию
 
-  window.redactor.EFFECTS_LIST.addEventListener('click', window.redactor.effectsListClickHandler);
+  window.redactor.Nodes.EFFECTS_LIST.addEventListener('click', window.redactor.effectsListClickHandler);
 
 }());

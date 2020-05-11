@@ -6,17 +6,7 @@
 
   var getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-  // добавляет/убирает css класс
-
-  var addRemoveClass = function (node, styleClass, flag) {
-    if (flag === 1) {
-      return node.classList.add(styleClass);
-    } else if (flag === 0) {
-      return node.classList.remove(styleClass);
-    }
-  };
-
-  // отдает случайный комментарий
+  // возвращает случайный комментарий
 
   var getOneComment = function (minNumber, maxNumber) {
     return {
@@ -30,18 +20,32 @@
 
   var getRandomComments = function () {
     var items = [];
-    var count = getRandomNumber(window.data.Numbers.MIN_COMMENT, window.data.COUNT_FOR_COMMENTS);
+    var count = getRandomNumber(window.data.Numbers.MIN_COMMENT, window.data.Numbers.MAX_COMMENT);
     for (var j = 0; j < count; j++) {
       items.push(
-        getOneComment(j, window.data.COUNT_FOR_COMMENTS),
+        getOneComment(j, window.data.Numbers.MAX_COMMENT),
       );
     }
     return items;
   };
 
+  // скрывает блок управления глубиной эффекта в поле редактирования фотографии
+
+  var hideControlBlock = function (image, controller, evt) {
+    if (image.classList.contains(window.redactor.StyleEffect.NONE)) {
+      return controller.setAttribute('hidden', 'hidden');
+    } else if (image.hasAttribute('class') === false) {
+      controller.setAttribute('hidden', 'hidden');
+    } else if (image.hasAttribute('class') === true) {
+      controller.removeAttribute('hidden');
+    }  else if (evt === 'keydown' || evt === 'click') {
+      controller.setAttribute('hidden', 'hidden');
+    }
+  };
+
   window.util = {
     getNumber: getRandomNumber,
     getComments: getRandomComments,
-    addRemoveClass: addRemoveClass,
+    hideControlBlock: hideControlBlock
   };
 }());

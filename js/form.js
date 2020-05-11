@@ -1,23 +1,30 @@
 'use strict';
 
-var HASHTAG_FIELD = window.controller.FORM.querySelector('.text__hashtags');
-var COMENTS_FIELD = window.controller.FORM.querySelector('.text__description');
-var hashTags;
-var has
+(function () {
 
-HASHTAG_FIELD.addEventListener('blur', function () {
-  hashTags = HASHTAG_FIELD.value.split('#');
-  /* console.log(typeof hashTags[1].charAt(hashTags[1].length - 1)); */
-   hashTags.forEach(function(hashTag) {
-console.log(hashTag.length);
-console.log(hashTag.charAt(hashTag.length - 1));
-  if (hashTag.includes(' ') === true) {
-/*  alert('Пробел в хэштэге'); */
-    HASHTAG_FIELD.setCustomValidity('Пробел в хэштэге');
+  var HASHTAG_FIELD = window.controller.FORM.querySelector('.text__hashtags');
 
-   } else  {
-     HASHTAG_FIELD.setCustomValidity('');
-   }
- });
-});
+  HASHTAG_FIELD.addEventListener('blur', function () {
+    var t = HASHTAG_FIELD.value;
+    let delSymb = t.replace(/[#' ']/g, '');
+    let reg = new RegExp(/\w#/g);
+    var a = t.replace(/ {1,}/g," ").split(' ');
 
+    for (var i = 0; i < a.length; i++) {
+      if (reg.test(t) === true)
+       return HASHTAG_FIELD.setCustomValidity('there must been the spacetrailling between hashtags');
+      else if (a[i].length > 20)
+       return HASHTAG_FIELD.setCustomValidity('hashtag must be less then 20 symbols');
+      else if (a[i][0] !== '#')
+       return HASHTAG_FIELD.setCustomValidity('hashtag only can start with #');
+      else if (a.length > 5)
+       return HASHTAG_FIELD.setCustomValidity('you have 5 hashtags limit');
+      else if (a[i].length === 1)
+       return HASHTAG_FIELD.setCustomValidity('hashtag must contents with numbers or letters & start with #');
+      else if (delSymb.search(/\W/) !== -1)
+        return HASHTAG_FIELD.setCustomValidity('хэштег может состоять только из букв и цифр и не должен содержать символов');
+      HASHTAG_FIELD.setCustomValidity('');
+    }
+  });
+
+}())
