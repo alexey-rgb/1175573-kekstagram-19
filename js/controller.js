@@ -1,7 +1,10 @@
 'use strict';
 
 (function () {
+
   var REDACTOR_WRAPPER = document.querySelector('.img-upload__overlay');
+
+  var EFFECT_LEVEL_DEPTH = REDACTOR_WRAPPER.querySelector('.effect-level__depth');
 
   var FORM = document.querySelector('.img-upload__form');
 
@@ -127,11 +130,14 @@
       // у редактируемой фотографии проверяется актуальный класс
       // и если он соответствует одному из вышеперечисленных эффектов,
       // то вызывается функция управления глубиной соотв. эффекта.
+      // последняя строчка, добавляет css эффект(жёлтая линия на контролере),
+      // сообщающий текущий уровень глубины эффекта,
 
       var setSaturation = function (coordinates) {
         EffectClass.forEach(function (v) {
           if (window.loader.PHOTO_LOCATION.classList.contains(v)) {
             convertPositionValue(coordinates);
+            EFFECT_LEVEL_DEPTH.style = 'width: ' + coordinates + 'px;'
           }
         })
       };

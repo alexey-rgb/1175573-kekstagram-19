@@ -50,25 +50,27 @@
     OFF: 'hide'
   }
 
-  /*********************************************** */
-
   // конструктор + функция для создания
-  // дом-элемента и контроля за его видимостью(комментарии/блок загрузки следующих комментариев)
+  // дом-элемента и контроля за его видимостью(комментарии/блок загрузки следующих комментариев),
+  // а так же в последнем условии добавилась возможность изменять css стиль активной кнопки(фильтра)
 
   var elementVisibilityData = function (node, hidden) {
     this.hidden = hidden;
     this.node = node;
   }
 
-  elementVisibilityData.prototype.addRemoveClass = function (flag) {
+  elementVisibilityData.prototype.addRemoveClass = function (flag, a) {
     if (flag === Visability.ON) {
       return this.node.classList.add(this.hidden);
     } else if (flag === Visability.OFF) {
       return this.node.classList.remove(this.hidden);
+    } else if (flag === true) {
+      window.filter.Filter.FILTER_BUTTONS.forEach(b => b.classList.contains(a[0])
+        ? b.classList.remove(a[0]) : false)
+      a[1].classList.add(a[0]);
+      return;
     }
   };
-
-  /*************************************************** */
 
   window.data = {
     Numbers: Numbers,

@@ -2,21 +2,16 @@
 
 (function () {
 
-  // присваиваем моки переменной
-
-  /*  var ads = window.data.mockData(window.data.COUNT_MOCK); */
+  var handlerStatuses = ['isAdd', 'isRemoove'];
 
   // рендерит json-ответ сервера в виде 25 фотографий пользователей с описанием
 
-  window.backend.getRequest(window.photo.insertNewDomElement);
+  window.backend.getRequest(window.photo.insertNewDomElement, window.backend.Url.GET);
+
 
   // активирует возможность открытия/закрытия фотографий и описания, других пользователей
 
-  window.copy.photoDesc.addHandler();
-
-  // активирует возможность открытия/закрытия окна редатирования фото разными способами
-
-  window.copy.photoRedactor.addHandler();
+  window.copy.photoDesc.addHandler(handlerStatuses[0]);
 
   // отображает масштаб редактируемого фото в %
 

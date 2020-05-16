@@ -44,6 +44,9 @@
       reader.readAsDataURL(file);
     }
     redactorWrapper.addRemoveClass(window.data.Visability.OFF);
+    /*******************Оконстантить******************** */
+    window.form.redactorPopupHandlerCondition('isAdd', window.form.HASHTAG_FIELD, window.form.TEXT_AREA)
+    window.copy.photoRedactor.addHandler('isAdd');
   });
 
   window.loader = {

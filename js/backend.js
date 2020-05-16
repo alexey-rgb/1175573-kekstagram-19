@@ -12,38 +12,40 @@
     GET: 'https://javascript.pages.academy/kekstagram/data'
   }
 
-  function setRequest(xhr, onLoad) {
-    xhr.responseType = 'json';
+  function setRequest(xhr, handleEvent, sendingError) {
+  //  xhr.responseType = 'json';
 
     xhr.onload = function () {
-      console.log(xhr.response);
-      return xhr.status === Status.SUCCESS
-        ? onLoad(xhr.response) : console.log('Error');
+      return xhr.status === Status.SUCCESS ? handleEvent(JSON.parse(xhr.response))
+       : sendingError();
     };
+
     xhr.onerror = function () {
       `Ошибка ${xhr.status}: ${xhr.statusText}`;
     };
-  /*   xhr.onprogress = function () {
-      alert(`Получено ${event.loaded} из ${event.total} байт`);
-    }; */
+    /*   xhr.onprogress = function () {
+        alert(`Получено ${event.loaded} из ${event.total} байт`);
+      }; */
   }
 
-  function getRequest(onLoad) {
+  function getRequest(onLoad, url) {
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', Url.GET);
-    setRequest(xhr, onLoad);
+    xhr.open('GET', url);
+    setRequest(xhr, onLoad, null);
     xhr.send();
   }
 
-  /*function sendData() {
+  function sendData(data, onSuccess, onError, url) {
     let xhr = new XMLHttpRequest();
-    setRequest(xhr);
-    xhr.open('POST', Url.POST);
+    setRequest(xhr, onSuccess, onError);
+    xhr.open('POST', url);
     xhr.send(data);
-  } */
+  }
 
   window.backend = {
-    getRequest: getRequest
+    getRequest: getRequest,
+    Url: Url,
+    sendData: sendData
   }
 
 }());

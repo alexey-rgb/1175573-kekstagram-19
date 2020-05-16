@@ -23,7 +23,7 @@
     '100%': 'scale(1)',
   };
 
-  // обертка окна редатирования
+  // обертка окна редактирования
 
   var REDACTOR_WRAPPER = document.querySelector('.img-upload__overlay');
 
@@ -32,6 +32,7 @@
     PHOTO_LOCATION: REDACTOR_WRAPPER.querySelector('.img-upload__preview img'),
     EFFECTS_LIST: REDACTOR_WRAPPER.querySelector('.effects__list'),
     SCALE_CONTROL_WRAPPER: REDACTOR_WRAPPER.querySelector('.img-upload__scale'),
+    EFFECT_LEVEL_DEPTH: REDACTOR_WRAPPER.querySelector('.effect-level__depth')
   }
 
   // содержит данные необходимые для контроля за масштабом редактируемой фотографии
@@ -65,6 +66,10 @@
       arg.RIGHT_SIZE_CONTROLLER.setAttribute(arg.attribute, arg.condition);
     } else if (arg.SIZE_INTERFACE.value === arg.min) {
       arg.LEFT_SIZE_CONTROLLER.setAttribute(arg.attribute, arg.condition);
+    } else if (REDACTOR_WRAPPER.classList.contains('hidden')) {
+      scaleСontrollerData.SIZE_INTERFACE.value = '100%'
+      scaleСontrollerData.RIGHT_SIZE_CONTROLLER.setAttribute('disabled', 'disabled')
+      scaleСontrollerData.LEFT_SIZE_CONTROLLER.removeAttribute('disabled')
     }
   };
 
@@ -83,6 +88,15 @@
         break;
     }
   };
+
+  // возвращает к исходным настройкам интерфейс масштабирования фотографии
+  // и контроллеры, в случае выхода из окна редатирования фотографии
+
+  function backToStartSetScaleContoller(scaleControlObj) {
+    scaleControlObj.SIZE_INTERFACE.value = '100%'
+    scaleControlObj.RIGHT_SIZE_CONTROLLER.setAttribute('disabled', 'disabled')
+    scaleControlObj.LEFT_SIZE_CONTROLLER.removeAttribute('disabled')
+  }
 
   // вызывает 2 вышеупомянутые функции, а именно устанавливает границы масштаба 25%-100%,
   // шаг измененения масштаба равен 25% на каждый клик по котроллерам,
@@ -119,6 +133,7 @@
     window.util.hideControlBlock(Nodes.PHOTO_LOCATION, Nodes.EFFECT_CONTROL_WRAPPER);
     // ставит пин-конртоллер в крайнее левое положение
     window.controller.EFFECT_CONTROLLER.style = 'left: 100%';
+    Nodes.EFFECT_LEVEL_DEPTH.style = 'width: 100%;';
   };
 
   checkLimitValue(scaleСontrollerData);
@@ -127,7 +142,11 @@
     Nodes: Nodes,
     scaleButtonClickHandler: scaleButtonClickHandler,
     effectsListClickHandler: effectsListClickHandler,
-    StyleEffect: StyleEffect
+    StyleEffect: StyleEffect,
+    checkLimitValue: checkLimitValue,
+    scaleСontrollerData: scaleСontrollerData,
+    backToStartSetScaleContoller: backToStartSetScaleContoller,
+    REDACTOR_WRAPPER: REDACTOR_WRAPPER
   };
 
 }());

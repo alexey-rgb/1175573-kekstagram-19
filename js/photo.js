@@ -14,13 +14,10 @@
     IMAGE_DESCRIPTION: document.querySelector('.social__caption'),
     BODY: document.querySelector('body'),
     COMMENT_COUNT: document.querySelector('.social__comment-count'),
-    COMMENT_LOADER: document.querySelector('.comments-loader'),
+    COMMENT_LOADER: document.querySelector('.comments-loader')
   };
 
-  var SOCIAL_PICTURE = Nodes.SOCIAL_COMMENTS.querySelector('.social__picture');
-
   var classHidden = 'hidden';
-
 
   var renderMessage = function (comments, node) {
     comments.forEach(function (comment, j) {
@@ -61,7 +58,7 @@
 
   var renderPhoto = function (item) {
     var pictureClickHandler = function () {
-      removeClasses();
+      //  removeClasses();
       renderPhotoDescription(item);
       Nodes.BODY.classList.add('modal-open');
     };
@@ -76,7 +73,6 @@
   // записываем будущие ноды во фрагмент
 
   var renderPhotos = function (descriptions) {
-    console.log(Array.isArray(descriptions))
     var fragment = document.createDocumentFragment();
     descriptions.forEach(function (item) {
       fragment.appendChild(renderPhoto(item));
@@ -84,14 +80,46 @@
     return fragment;
   };
 
-  var insertNewDomElement = (data) => Nodes.PICTURES_WRAPPER.appendChild(renderPhotos(data));
+
+
+  var copyResponse;
+  var copyResponse2
+
+  var insertNewDomElement = (photo) => {
+    // сохраняю данные с бэка во внешнюю переменную
+    copyResponse = photo.slice();
+    copyResponse2 = photo.slice();
+
+    var handler = (evt) => window.filter.Filter.filterClickHandler(evt, copyResponse, copyResponse2);
+    // рендерит фото при начальной загрузке/перезагрузке страницы,
+    Nodes.PICTURES_WRAPPER.appendChild(renderPhotos(photo));
+    // показывает блок с фильтрами,
+    window.filter.Filter.FILTER_WRAPPER.classList.remove('img-filters--inactive');
+    // вешает на фильтры обработчик.
+    /* window.filter.Filter.FILTER_WRAPPER.addEventListener('click', filterClickHandler) */
+    window.filter.Filter.FILTER_WRAPPER.addEventListener('click', handler)
+  }
 
   window.photo = {
     Nodes: Nodes,
     classHidden: classHidden,
-    insertNewDomElement: insertNewDomElement
+    insertNewDomElement: insertNewDomElement,
+    renderPhotos: renderPhotos,
+    commentCount: commentCount
   };
 }());
+
+
+
+
+
+
+
+
+
+
+
+
 
 /****************Все что касалось мок-данных*******************/
 
@@ -125,5 +153,3 @@
     });
     renderMessage();
   } */
-
-
