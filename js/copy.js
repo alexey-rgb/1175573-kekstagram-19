@@ -12,6 +12,8 @@
 
   var EFFECT_LEVEL_DEPTH = Nodes.REDACTOR_WRAPPER.querySelector('.effect-level__depth');
 
+  var condition = 'isRemoove';
+
   // скрывает окно просмотра фотографии других пользователей и окно редатирования фотографии пользователя
 
   function hideBlock(node) {
@@ -19,15 +21,15 @@
       || node.DESC_WRAPPER.classList.add('hidden');
   }
 
-  function backPageToStartSettings (event) {
-     window.loader.resetFileLoader();
-      hideBlock(Nodes);
-      window.util.hideControlBlock(window.loader.PHOTO_LOCATION,
-        window.controller.EFFECT_CONTROL_WRAPPER, event);
-      window.redactor.backToStartSetScaleContoller(window.redactor.scaleСontrollerData)
-      /*****************оконстантить isRemoove********************* */
-      window.form.redactorPopupHandlerCondition('isRemoove', window.form.HASHTAG_FIELD, window.form.TEXT_AREA)
-      EFFECT_LEVEL_DEPTH.style = 'width: 100%;';
+  function backPageToStartSettings(event) {
+    window.loader.resetFileLoader();
+    hideBlock(Nodes);
+    window.util.hideControlBlock(window.loader.PHOTO_LOCATION,
+      window.controller.EFFECT_CONTROL_WRAPPER, event);
+    window.redactor.backToStartSetScaleContoller(window.redactor.scaleСontrollerData)
+    /*****************оконстантить isRemoove********************* */
+    window.form.redactorPopupHandlerCondition(condition, window.form.HASHTAG_FIELD, window.form.TEXT_AREA)
+    EFFECT_LEVEL_DEPTH.style = 'width: 100%;';
   }
 
   // при нажатии на Esc закрывает модальные окна(описание фотографии/редактирование фото)
@@ -42,7 +44,7 @@
 
   function mouseCloseDescription() {
     backPageToStartSettings();
-  }
+  };
 
   // генерирует колбеки/обработчики
 

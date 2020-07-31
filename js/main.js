@@ -8,7 +8,6 @@
 
   window.backend.getRequest(window.photo.insertNewDomElement, window.backend.Url.GET);
 
-
   // активирует возможность открытия/закрытия фотографий и описания, других пользователей
 
   window.copy.photoDesc.addHandler(handlerStatuses[0]);

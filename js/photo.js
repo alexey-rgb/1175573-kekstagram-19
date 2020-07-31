@@ -14,7 +14,8 @@
     IMAGE_DESCRIPTION: document.querySelector('.social__caption'),
     BODY: document.querySelector('body'),
     COMMENT_COUNT: document.querySelector('.social__comment-count'),
-    COMMENT_LOADER: document.querySelector('.comments-loader')
+    COMMENT_LOADER: document.querySelector('.comments-loader'),
+    PHOTOS_WRAPPER: document.querySelector('.pictures')
   };
 
   var classHidden = 'hidden';
@@ -56,17 +57,12 @@
   // можно кликнуть на фото и получаем развернутое описание фотографии
   //(большое фото, лайки, коментарии, их количества, описание, поле для комментария)
 
-  var renderPhoto = function (item) {
-    var pictureClickHandler = function () {
-      //  removeClasses();
-      renderPhotoDescription(item);
-      Nodes.BODY.classList.add('modal-open');
-    };
+  var renderPhoto = function (item, i) {
     var newPictureDesc = Nodes.PICTURE_TEMPLATE.cloneNode(true);
     newPictureDesc.querySelector('.picture__img').src = item.url;
     newPictureDesc.querySelector('.picture__comments').textContent = item.comments.length;
     newPictureDesc.querySelector('.picture__likes').textContent = item.likes;
-    newPictureDesc.querySelector('.picture').addEventListener('click', pictureClickHandler);
+    newPictureDesc.querySelector('.picture__img').setAttribute('id', +item.url.match(/\d/g).join(''));
     return newPictureDesc;
   };
 
@@ -74,30 +70,53 @@
 
   var renderPhotos = function (descriptions) {
     var fragment = document.createDocumentFragment();
-    descriptions.forEach(function (item) {
-      fragment.appendChild(renderPhoto(item));
+    descriptions.forEach(function (item, i) {
+      fragment.appendChild(renderPhoto(item, i));
     });
     return fragment;
   };
 
+  // добавляет обработчик на родительский блок, в котором содержаться все фотографии
+  // по клику на любое фото, событие срабатывает на всплытии как раз на этом родительском блоке
+  // результат - открытие описания фотографии, по которой кликнули.
 
+  var photosWrapperAddHandler = function (nodesWrapper, data) {
 
-  var copyResponse;
-  var copyResponse2
+    var photoClickHandler = function (event) {
+      var nodes = nodesWrapper.PHOTOS_WRAPPER.querySelectorAll('.picture__img')
+      nodes.forEach(node => {
+        if (event.target == node) {
+          renderPhotoDescription(data[+node.getAttribute('id') - 1]);
+          nodesWrapper.BODY.classList.add('modal-open');
+        }
+      })
+    }
+    nodesWrapper.PHOTOS_WRAPPER.addEventListener('click', photoClickHandler)
+  }
 
   var insertNewDomElement = (photo) => {
-    // сохраняю данные с бэка во внешнюю переменную
-    copyResponse = photo.slice();
-    copyResponse2 = photo.slice();
+    // объект хранит копии ответа с сервера и ссылку на обработчик
+    var PhotoData = {
+      copyResponse: photo.slice(),
+      copyResponse2: photo.slice(),
+    };
 
-    var handler = (evt) => window.filter.Filter.filterClickHandler(evt, copyResponse, copyResponse2);
+    // event.propagation на всплытие. Описание фотографии пользователей
+    // открывается по клику. Событие слушаем на родительском блоке.
+    var handlerLink = photosWrapperAddHandler(Nodes, PhotoData.copyResponse2);
+
+    var handler = (evt) => window.filter.Filter.filterClickHandler(evt, PhotoData);
+
     // рендерит фото при начальной загрузке/перезагрузке страницы,
     Nodes.PICTURES_WRAPPER.appendChild(renderPhotos(photo));
+
+
     // показывает блок с фильтрами,
     window.filter.Filter.FILTER_WRAPPER.classList.remove('img-filters--inactive');
     // вешает на фильтры обработчик.
-    /* window.filter.Filter.FILTER_WRAPPER.addEventListener('click', filterClickHandler) */
-    window.filter.Filter.FILTER_WRAPPER.addEventListener('click', handler)
+    window.filter.Filter.FILTER_WRAPPER.addEventListener('click', handler);
+    /* var handler2 = (evt) => window.filter.Filter.returnDefaultSetAfterSubmit(evt, PhotoData);
+    butClose.addEventListener('click', handler2); */
   }
 
   window.photo = {
@@ -105,21 +124,10 @@
     classHidden: classHidden,
     insertNewDomElement: insertNewDomElement,
     renderPhotos: renderPhotos,
-    commentCount: commentCount
+    commentCount: commentCount,
+    photosWrapperAddHandler: photosWrapperAddHandler
   };
 }());
-
-
-
-
-
-
-
-
-
-
-
-
 
 /****************Все что касалось мок-данных*******************/
 

@@ -38,7 +38,7 @@
       controller.setAttribute('hidden', 'hidden');
     } else if (image.hasAttribute('class') === true) {
       controller.removeAttribute('hidden');
-    }  else if (evt === 'keydown' || evt === 'click') {
+    } else if (evt === 'keydown' || evt === 'click') {
       controller.setAttribute('hidden', 'hidden');
     }
   };
@@ -48,4 +48,5 @@
     getComments: getRandomComments,
     hideControlBlock: hideControlBlock
   };
+
 }());

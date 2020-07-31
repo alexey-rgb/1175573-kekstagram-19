@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var FORM = document.querySelector('.img-upload__form');
 
   var HASHTAG_FIELD = window.controller.FORM.querySelector('.text__hashtags');
@@ -11,6 +10,8 @@
   var handlerStatuses = ['isAdd', 'isRemoove'];
 
   var reg = new RegExp(/\w#/g);
+
+  // проверка введенных пользователем хэштегов на валидность
 
   function checkHashtag(node) {
 
@@ -35,9 +36,14 @@
     }
   }
 
+  // если поле с хештегами окажется в фокусе, то закрытие модального окна(редактор фото) невозможно
+
   function hashtagFocusHandler() {
     window.copy.photoRedactor.addHandler(handlerStatuses[1]);
   }
+
+  // если поле с хештегами теряет фокус, то закрытие модального окна(редактор фото) возможно
+  // + вызывается функция проверки введенных хештегов на валидность
 
   function hashtagBlurHandler() {
     window.copy.photoRedactor.addHandler(handlerStatuses[0]);
@@ -45,6 +51,8 @@
   }
 
   /****************Сократить кол-во аргументов****************** */
+
+  // в зависимости от флага, добавляет или удаляет обработчик
 
   function redactorPopupHandlerCondition(flag, hashtag, textField) {
     if (flag === handlerStatuses[0]) {
@@ -60,11 +68,14 @@
     }
   }
 
+  // отправляет данные формы на сервер, восстанавливает стандартные значения всем элементам формы
+
   var formSubmitHandler = (evt) => {
     evt.preventDefault();
     /********************Сократить кол-во аргументов************************************ */
     window.backend.sendData(new FormData(FORM),
-    window.message.renderSuccessMessage, window.message.renderErrorMessage, window.backend.Url.POST)
+      window.message.renderSuccessMessage, window.message.renderErrorMessage, window.backend.Url.POST);
+    FORM.reset();
   }
 
   FORM.addEventListener('submit', formSubmitHandler)

@@ -27,17 +27,21 @@
 
   // в зависимости от кнопки применяет функция-фильтр(вышеуказанные)
 
-  function searchButton(but, data1, data2) {
+  function searchButton(but, data) {
+
     switch (but.getAttribute('id')) {
       case this.filters[0]:
         // просто рендерит все фотографии, как при первоночальной загрузке страницы
-        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(data2));
+        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(data.copyResponse2));
+        window.photo.photosWrapperAddHandler(PICTURES_WRAPPER, data.copyResponse2);
         break;
       case this.filters[1]:
-        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(this.getTenPhoto(data1)));
+        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(this.getTenPhoto(data.copyResponse)));
+        window.photo.photosWrapperAddHandler(PICTURES_WRAPPER, data.copyResponse);
         break;
       case this.filters[2]:
-        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(data1.sort(this.compareNumbers)));
+        PICTURES_WRAPPER.appendChild(window.photo.renderPhotos(data.copyResponse.sort(this.compareNumbers)));
+        window.photo.photosWrapperAddHandler(PICTURES_WRAPPER, data.copyResponse);
         break;
     }
   }
@@ -51,16 +55,16 @@
   // удаляются все фотографии
   // рендерятся новые фотографии, в зависимости от типа фильтра
 
-   /*********************Сократить количество аргументов*********************** */
+  /*********************Сократить количество аргументов*********************** */
 
-  function filterClickHandler(evt, data, data2) {
+  function filterClickHandler(evt, data) {
     var PICTURE_LINK = document.querySelectorAll('.picture');
     window.filter.Filter.FILTER_BUTTONS.forEach(b => {
       if (evt.target === b) {
         applyArgforFilterControl[1][1] = b;
         window.photo.commentCount.addRemoveClass.apply(b, applyArgforFilterControl);
         PICTURE_LINK.forEach(photo => photo.remove())
-        window.filter.Filter.searchButton(b, data, data2)
+        window.filter.Filter.searchButton(b, data)
       }
     })
   }
@@ -79,7 +83,8 @@
   }
 
   window.filter = {
-    Filter: Filter
+    Filter: Filter,
+    applyArgforFilterControl: applyArgforFilterControl
   }
 }())
 
